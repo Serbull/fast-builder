@@ -1,0 +1,16 @@
+{
+    "name": "com.serbull.fastbuilder",
+    "author": 
+	{
+		"name": "Serbull"
+	},
+    "displayName": "Fast Builder",
+    "unity": "2020.3",
+    "version": "1",
+    "keywords": [],
+    "dependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Serbull/fast-builder.git"
+    }
+}
