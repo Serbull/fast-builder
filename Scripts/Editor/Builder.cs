@@ -9,13 +9,13 @@ namespace Serbull.Builder
 {
     public static class Builder
     {
-        [MenuItem("Builder/☢ Build Android .apk",false,200)]
+        [MenuItem("Builder/☢ Build Android .apk", false, 200)]
         public static void BuildAndroidApk()
         {
             BuildAndroid(true);
         }
 
-        [MenuItem("Builder/▶ Build Android .aab",false, 201)]
+        [MenuItem("Builder/▶ Build Android .aab", false, 201)]
         public static void BuildAndroidAab()
         {
             BuildAndroid(false);
@@ -33,8 +33,7 @@ namespace Serbull.Builder
                     return;
                 }
             }
-                
-            UnityEngine.Debug.Log(buildPath);
+
             var fileName = Application.productName;
             int buildNumber = 0;
 
@@ -64,7 +63,7 @@ namespace Serbull.Builder
             {
                 scenes = GetEnabledScenePaths(),
                 target = BuildTarget.Android,
-                locationPathName = buildPath + fileName,
+                locationPathName = buildPath + "/" + fileName,
                 options = apk ? BuildOptions.Development : BuildOptions.None
             };
 
