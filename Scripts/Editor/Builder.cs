@@ -35,19 +35,10 @@ namespace Serbull.Builder
             }
 
             var fileName = Application.productName;
-            int buildNumber = 0;
 
             EditorUserBuildSettings.buildAppBundle = !apk;
 
-            if (apk)
-            {
-                buildNumber = PlayerPrefs.GetInt("fast-builder-apk-build-number", 1);
-                fileName += $"-{buildNumber}.apk";
-            }
-            else
-            {
-                fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).aab";
-            }
+            fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).aab";
 
             var useKey = BuilderSettings.UseKeystore;
             PlayerSettings.Android.useCustomKeystore = useKey;
@@ -64,24 +55,18 @@ namespace Serbull.Builder
                 scenes = GetEnabledScenePaths(),
                 target = BuildTarget.Android,
                 locationPathName = buildPath + "/" + fileName,
-                options = apk ? BuildOptions.Development : BuildOptions.None
+                options = apk && BuilderSettings.ApkDebugBuild ? BuildOptions.Development : BuildOptions.None
             };
 
             var report = BuildPipeline.BuildPlayer(options);
             if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
             {
                 UnityEngine.Debug.Log($"FAST BUILDER: succesful build! {fileName}");
-
-                if (apk)
-                {
-                    PlayerPrefs.SetInt("fast-builder-apk-build-number", buildNumber + 1);
-                }
-
                 OpenFolderWithPackage(buildPath);
             }
         }
 
-        private static void OpenFolderWithPackage(string path)
+        public static void OpenFolderWithPackage(string path)
         {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             string command = "open";

@@ -9,6 +9,7 @@ namespace Serbull.Builder
     public class BuilderSettingsEditor : EditorWindow
     {
         private static string _buildPath;
+        private static bool _apkDebugBuild;
         private static bool _useKeystore;
         private static string _keystoreName;
         private static string _keyaliasName;
@@ -19,6 +20,7 @@ namespace Serbull.Builder
         private static void ShowWindow()
         {
             _buildPath = BuilderSettings.GetBuildPath();
+            _apkDebugBuild = BuilderSettings.ApkDebugBuild;
             _useKeystore = BuilderSettings.UseKeystore;
             _keystoreName = PlayerSettings.Android.keystoreName;
             _keyaliasName = PlayerSettings.Android.keyaliasName;
@@ -51,6 +53,15 @@ namespace Serbull.Builder
             }
 
             GUILayout.Space(25);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("APK debug build", GUILayout.Width(100));
+            var apkDebugBuild = GUILayout.Toggle(_apkDebugBuild, "");
+            if (apkDebugBuild != _apkDebugBuild)
+            {
+                _apkDebugBuild = apkDebugBuild;
+                BuilderSettings.ApkDebugBuild = apkDebugBuild;
+            }
+            GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Use keystore", GUILayout.Width(100));
             var useKeystore = GUILayout.Toggle(_useKeystore, "");
