@@ -34,11 +34,11 @@ namespace Serbull.Builder
                 }
             }
 
-            var fileName = Application.productName;
-
             EditorUserBuildSettings.buildAppBundle = !apk;
 
-            fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).aab";
+            var fileName = Application.productName;
+            fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).";
+            fileName += apk ? "apk" : "aab";
 
             var useKey = BuilderSettings.UseKeystore;
             PlayerSettings.Android.useCustomKeystore = useKey;
