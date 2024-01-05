@@ -27,7 +27,11 @@ namespace Serbull.Builder
             if (string.IsNullOrEmpty(buildPath))
             {
                 buildPath = EditorUtility.OpenFolderPanel("Select Folder", "", "");
-                if (string.IsNullOrEmpty(buildPath))
+                if (!string.IsNullOrEmpty(buildPath))
+                {
+                    BuilderSettings.SetBuildPath(buildPath);
+                }
+                else
                 {
                     UnityEngine.Debug.LogError($"FAST BUILDER: build path is null");
                     return;
@@ -44,17 +48,15 @@ namespace Serbull.Builder
             PlayerSettings.Android.useCustomKeystore = useKey;
             if (useKey)
             {
-                // PlayerSettings.Android.keystoreName = BuilderSettings.GetKeystorePassword();
-                // PlayerSettings.Android.keyaliasName = BuilderSettings.GetKeyaliasPassword();
                 PlayerSettings.keystorePass = BuilderSettings.GetKeystorePassword();
                 PlayerSettings.keyaliasPass = BuilderSettings.GetKeyaliasPassword();
             }
-
+            var fullPath = buildPath + "/" + fileName;
             BuildPlayerOptions options = new BuildPlayerOptions
             {
                 scenes = GetEnabledScenePaths(),
                 target = BuildTarget.Android,
-                locationPathName = buildPath + "/" + fileName,
+                locationPathName =fullPath,
                 options = apk && BuilderSettings.ApkDebugBuild ? BuildOptions.Development : BuildOptions.None
             };
 
@@ -62,6 +64,12 @@ namespace Serbull.Builder
             if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
             {
                 UnityEngine.Debug.Log($"FAST BUILDER: succesful build! {fileName}");
+                if (BuilderSettings.AddTimePrefix)
+                {
+                    var currentTime = DateTime.Now.ToString("HH:mm");
+                    var newFilePath = fullPath.Insert(fullPath.Length - 4, "-" + currentTime);
+                    System.IO.File.Move(fullPath, newFilePath);
+                }
                 OpenFolderWithPackage(buildPath);
             }
         }
