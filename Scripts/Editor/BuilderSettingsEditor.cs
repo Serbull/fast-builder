@@ -10,6 +10,7 @@ namespace Serbull.Builder
     {
         private static string _buildPath;
         private static bool _apkDebugBuild;
+        private static bool _apkCheatBuild;
         private static bool _addTimePrefix;
         private static bool _useKeystore;
         private static string _keystoreName;
@@ -22,6 +23,7 @@ namespace Serbull.Builder
         {
             _buildPath = BuilderSettings.GetBuildPath();
             _apkDebugBuild = BuilderSettings.ApkDebugBuild;
+            _apkCheatBuild = BuilderSettings.ApkCheatBuild;
             _addTimePrefix = BuilderSettings.AddTimePrefix;
             _useKeystore = BuilderSettings.UseKeystore;
             _keystoreName = PlayerSettings.Android.keystoreName;
@@ -62,6 +64,15 @@ namespace Serbull.Builder
             {
                 _apkDebugBuild = apkDebugBuild;
                 BuilderSettings.ApkDebugBuild = apkDebugBuild;
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("APK cheat build", GUILayout.Width(100));
+            var apkCheatBuild = GUILayout.Toggle(_apkCheatBuild, "");
+            if (apkCheatBuild != _apkCheatBuild)
+            {
+                _apkCheatBuild = apkCheatBuild;
+                BuilderSettings.ApkCheatBuild = apkCheatBuild;
             }
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();

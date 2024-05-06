@@ -12,6 +12,7 @@ namespace Serbull.Builder
             public string KeyaliasPass;
             public bool UseKeystore;
             public bool ApkDebugBuild = true;
+            public bool ApkCheatBuild = true;
             public bool AddTimePrefix = false;
         }
 
@@ -94,6 +95,19 @@ namespace Serbull.Builder
             set
             {
                 _data.ApkDebugBuild = value;
+                SaveSettingsData();
+            }
+        }
+
+        public static bool ApkCheatBuild
+        {
+            get
+            {
+                return _data.ApkCheatBuild;
+            }
+            set
+            {
+                _data.ApkCheatBuild = value;
                 SaveSettingsData();
             }
         }

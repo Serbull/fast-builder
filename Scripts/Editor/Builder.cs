@@ -23,6 +23,8 @@ namespace Serbull.Builder
 
         private static void BuildAndroid(bool apk)
         {
+            CheckDefineSymbols(apk);
+
             var buildPath = BuilderSettings.GetBuildPath();
             if (string.IsNullOrEmpty(buildPath))
             {
@@ -56,7 +58,7 @@ namespace Serbull.Builder
             {
                 scenes = GetEnabledScenePaths(),
                 target = BuildTarget.Android,
-                locationPathName =fullPath,
+                locationPathName = fullPath,
                 options = apk && BuilderSettings.ApkDebugBuild ? BuildOptions.Development : BuildOptions.None
             };
 
@@ -90,6 +92,26 @@ namespace Serbull.Builder
         private static string[] GetEnabledScenePaths()
         {
             return EditorBuildSettings.scenes.Select(e => e.path).ToArray();
+        }
+
+        private static void CheckDefineSymbols(bool apk)
+        {
+            bool useCheats = apk && BuilderSettings.ApkCheatBuild;
+
+            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);
+            var defineList = new List<string>(defines.Split(';'));
+            bool existDefine = defines.Contains("GAME_CHEATS");
+
+            if (useCheats && !existDefine)
+            {
+                defineList.Add("GAME_CHEATS");
+            }
+            else if (!useCheats && existDefine)
+            {
+                defineList.Remove("GAME_CHEATS");
+            }
+
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defineList.ToArray());
         }
     }
 }
