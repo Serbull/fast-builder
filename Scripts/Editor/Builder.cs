@@ -40,6 +40,11 @@ namespace Serbull.Builder
                 }
             }
 
+            if (!apk && BuilderSettings.AabBuildVersionUp)
+            {
+                PlayerSettings.Android.bundleVersionCode++;
+            }
+
             EditorUserBuildSettings.buildAppBundle = !apk;
 
             var fileName = Application.productName;
@@ -66,9 +71,9 @@ namespace Serbull.Builder
             if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
             {
                 UnityEngine.Debug.Log($"FAST BUILDER: succesful build! {fileName}");
-                if (BuilderSettings.AddTimePrefix)
+                if (apk && BuilderSettings.ApkTimePrefix)
                 {
-                    var currentTime = DateTime.Now.ToString("HH:mm");
+                    var currentTime = DateTime.Now.ToString("HHmm");
                     var newFilePath = fullPath.Insert(fullPath.Length - 4, "-" + currentTime);
                     System.IO.File.Move(fullPath, newFilePath);
                 }

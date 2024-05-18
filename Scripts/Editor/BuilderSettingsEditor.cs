@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -11,7 +9,8 @@ namespace Serbull.Builder
         private static string _buildPath;
         private static bool _apkDebugBuild;
         private static bool _apkCheatBuild;
-        private static bool _addTimePrefix;
+        private static bool _apkTimePrefix;
+        private static bool _aabBuildVersionUp;
         private static bool _useKeystore;
         private static string _keystoreName;
         private static string _keyaliasName;
@@ -24,7 +23,8 @@ namespace Serbull.Builder
             _buildPath = BuilderSettings.GetBuildPath();
             _apkDebugBuild = BuilderSettings.ApkDebugBuild;
             _apkCheatBuild = BuilderSettings.ApkCheatBuild;
-            _addTimePrefix = BuilderSettings.AddTimePrefix;
+            _apkTimePrefix = BuilderSettings.ApkTimePrefix;
+            _aabBuildVersionUp = BuilderSettings.AabBuildVersionUp;
             _useKeystore = BuilderSettings.UseKeystore;
             _keystoreName = PlayerSettings.Android.keystoreName;
             _keyaliasName = PlayerSettings.Android.keyaliasName;
@@ -57,42 +57,13 @@ namespace Serbull.Builder
             }
 
             GUILayout.Space(25);
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("APK debug build", GUILayout.Width(100));
-            var apkDebugBuild = GUILayout.Toggle(_apkDebugBuild, "");
-            if (apkDebugBuild != _apkDebugBuild)
-            {
-                _apkDebugBuild = apkDebugBuild;
-                BuilderSettings.ApkDebugBuild = apkDebugBuild;
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("APK cheat build", GUILayout.Width(100));
-            var apkCheatBuild = GUILayout.Toggle(_apkCheatBuild, "");
-            if (apkCheatBuild != _apkCheatBuild)
-            {
-                _apkCheatBuild = apkCheatBuild;
-                BuilderSettings.ApkCheatBuild = apkCheatBuild;
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Add time prefix", GUILayout.Width(100));
-            var addTimePrefix = GUILayout.Toggle(_addTimePrefix, "");
-            if (addTimePrefix != _addTimePrefix)
-            {
-                _addTimePrefix = addTimePrefix;
-                BuilderSettings.AddTimePrefix = addTimePrefix;
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Use keystore", GUILayout.Width(100));
-            var useKeystore = GUILayout.Toggle(_useKeystore, "");
-            if (useKeystore != _useKeystore)
-            {
-                _useKeystore = useKeystore;
-                BuilderSettings.UseKeystore = useKeystore;
-            }
-            GUILayout.EndHorizontal();
+
+            DrawCheckmarkBlock("APK debug build", ref _apkDebugBuild, (x) => BuilderSettings.ApkDebugBuild = x, "define DEBUG");
+            DrawCheckmarkBlock("APK cheat build", ref _apkCheatBuild, (x) => BuilderSettings.ApkCheatBuild = x, "define GAME_CHEATS");
+            DrawCheckmarkBlock("APK time prefix", ref _apkTimePrefix, (x) => BuilderSettings.ApkTimePrefix = x);
+            DrawCheckmarkBlock("AAB build version up", ref _aabBuildVersionUp, (x) => BuilderSettings.AabBuildVersionUp = x);
+            DrawCheckmarkBlock("Use keystore", ref _useKeystore, (x) => BuilderSettings.UseKeystore = x);
+
             if (_useKeystore)
             {
                 DrawInputBlock("Keystore name", ref _keystoreName, false);
@@ -111,10 +82,29 @@ namespace Serbull.Builder
             }
         }
 
+        private static void DrawCheckmarkBlock(string name, ref bool value, Action<bool> onEdited, string extraText = null)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(name, GUILayout.Width(120));
+            var currentValue = GUILayout.Toggle(value, "");
+            if (value != currentValue)
+            {
+                value = currentValue;
+                onEdited.Invoke(value);
+            }
+            if (extraText != null)
+            {
+                var style = new GUIStyle();
+                style.normal.textColor = Color.grey;
+                GUILayout.Label(extraText, style);
+            }
+            GUILayout.EndHorizontal();
+        }
+
         private static void DrawInputBlock(string name, ref string value, bool editable, Action onEdit = null)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(name, GUILayout.Width(100));
+            GUILayout.Label(name, GUILayout.Width(120));
             GUI.enabled = editable;
             var currentValue = GUILayout.TextField(value, GUILayout.ExpandWidth(true));
             GUI.enabled = true;
@@ -126,6 +116,4 @@ namespace Serbull.Builder
             GUILayout.EndHorizontal();
         }
     }
-
-    
 }

@@ -11,9 +11,10 @@ namespace Serbull.Builder
             public string KeystorePass;
             public string KeyaliasPass;
             public bool UseKeystore;
-            public bool ApkDebugBuild = true;
+            public bool ApkDebugBuild = false;
             public bool ApkCheatBuild = true;
-            public bool AddTimePrefix = false;
+            public bool ApkTimePrefix = true;
+            public bool AabBuildVersionUp = true;
         }
 
         private static SettingsData _data;
@@ -112,15 +113,28 @@ namespace Serbull.Builder
             }
         }
 
-        public static bool AddTimePrefix
+        public static bool ApkTimePrefix
         {
             get
             {
-                return _data.AddTimePrefix;
+                return _data.ApkTimePrefix;
             }
             set
             {
-                _data.AddTimePrefix = value;
+                _data.ApkTimePrefix = value;
+                SaveSettingsData();
+            }
+        }
+
+        public static bool AabBuildVersionUp
+        {
+            get
+            {
+                return _data.AabBuildVersionUp;
+            }
+            set
+            {
+                _data.AabBuildVersionUp = value;
                 SaveSettingsData();
             }
         }
