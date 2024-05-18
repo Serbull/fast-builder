@@ -71,7 +71,7 @@ namespace Serbull.Builder
                 if(string.IsNullOrEmpty(_keyaliasName))
                 {
                     GUILayout.BeginHorizontal();
-                    GUILayout.Space(105);
+                    GUILayout.Space(125);
                     var style = new GUIStyle();
                     style.normal.textColor = Color.red;
                     GUILayout.Label("Key is empty! Select key in Player Settings", style);
