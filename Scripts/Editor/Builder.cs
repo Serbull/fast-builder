@@ -48,7 +48,15 @@ namespace Serbull.Builder
             EditorUserBuildSettings.buildAppBundle = !apk;
 
             var fileName = Application.productName;
-            fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).";
+            if(apk)
+            {
+                fileName += $"-{PlayerSettings.bundleVersion}.";
+            }
+            else
+            {
+                fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).";
+            }
+
             fileName += apk ? "apk" : "aab";
 
             var useKey = BuilderSettings.UseKeystore;
