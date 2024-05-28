@@ -47,16 +47,7 @@ namespace Serbull.Builder
 
             EditorUserBuildSettings.buildAppBundle = !apk;
 
-            var fileName = Application.productName;
-            if(apk)
-            {
-                fileName += $"-{PlayerSettings.bundleVersion}.";
-            }
-            else
-            {
-                fileName += $"-{PlayerSettings.bundleVersion}({PlayerSettings.Android.bundleVersionCode}).";
-            }
-
+            var fileName = $"{Application.productName}-{PlayerSettings.bundleVersion}.";
             fileName += apk ? "apk" : "aab";
 
             var useKey = BuilderSettings.UseKeystore;
@@ -79,12 +70,20 @@ namespace Serbull.Builder
             if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
             {
                 UnityEngine.Debug.Log($"FAST BUILDER: succesful build! {fileName}");
-                if (apk && BuilderSettings.ApkTimePrefix)
+
+                if (!apk)
                 {
-                    var currentTime = DateTime.Now.ToString("HHmm");
-                    var newFilePath = fullPath.Insert(fullPath.Length - 4, "-" + currentTime);
+                    var addFileName = $"-({PlayerSettings.Android.bundleVersionCode})";
+                    var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
                     System.IO.File.Move(fullPath, newFilePath);
                 }
+                else if (BuilderSettings.ApkTimePrefix)
+                {
+                    var addFileName = $"-{DateTime.Now.ToString("HHmm")}";
+                    var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
+                    System.IO.File.Move(fullPath, newFilePath);
+                }
+
                 OpenFolderWithPackage(buildPath);
             }
         }
