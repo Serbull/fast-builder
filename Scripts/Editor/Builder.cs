@@ -4,9 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-#if UNITY_6000_0_OR_NEWER
-using UnityEditor.Build.Profile;
-#endif
 
 namespace Serbull.Builder
 {
@@ -114,14 +111,13 @@ namespace Serbull.Builder
             bool useCheats = apk && BuilderSettings.ApkCheatBuild;
 
 #if UNITY_6000_0_OR_NEWER
-            var buildProfile = BuildProfile.GetActiveBuildProfile();
-            var defineList = new List<string>(buildProfile.scriptingDefines);
-            var existDefine = defineList.Contains("GAME_CHEATS");
+            var defines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Android);
 #else
-            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);
-            var defineList = new List<string>(defines.Split(';'));
-            var existDefine = defines.Contains("GAME_CHEATS");
+            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);    
 #endif
+
+            var defineList = new List<string>(defines.Split(';'));
+            bool existDefine = defines.Contains("GAME_CHEATS");
 
             if (useCheats && !existDefine)
             {
@@ -133,7 +129,7 @@ namespace Serbull.Builder
             }
 
 #if UNITY_6000_0_OR_NEWER
-            buildProfile.scriptingDefines = defineList.ToArray();
+            PlayerSettings.SetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Android, defineList.ToArray());
 #else
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defineList.ToArray());
 #endif
