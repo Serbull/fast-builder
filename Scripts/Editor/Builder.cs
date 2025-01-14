@@ -54,8 +54,8 @@ namespace Serbull.Builder
             PlayerSettings.Android.useCustomKeystore = useKey;
             if (useKey)
             {
-                PlayerSettings.keystorePass = BuilderSettings.GetKeystorePassword();
-                PlayerSettings.keyaliasPass = BuilderSettings.GetKeyaliasPassword();
+                PlayerSettings.Android.keystorePass = BuilderSettings.GetKeystorePassword();
+                PlayerSettings.Android.keyaliasPass = BuilderSettings.GetKeyaliasPassword();
             }
             var fullPath = buildPath + "/" + fileName;
             BuildPlayerOptions options = new BuildPlayerOptions
@@ -79,7 +79,7 @@ namespace Serbull.Builder
                 }
                 else if (BuilderSettings.ApkTimePrefix)
                 {
-                    var addFileName = $"-{DateTime.Now.ToString("HHmm")}";
+                    var addFileName = $"-{DateTime.Now:HHmm}";
                     var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
                     System.IO.File.Move(fullPath, newFilePath);
                 }
@@ -97,7 +97,7 @@ namespace Serbull.Builder
 #endif
             string argument = "\"" + path + "\"";
 
-            ProcessStartInfo processInfo = new ProcessStartInfo(command, argument);
+            ProcessStartInfo processInfo = new(command, argument);
             Process.Start(processInfo);
         }
 
@@ -110,7 +110,12 @@ namespace Serbull.Builder
         {
             bool useCheats = apk && BuilderSettings.ApkCheatBuild;
 
-            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);
+#if UNITY_6000_0_OR_NEWER
+            var defines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Android);
+#else
+            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);    
+#endif
+
             var defineList = new List<string>(defines.Split(';'));
             bool existDefine = defines.Contains("GAME_CHEATS");
 
@@ -123,7 +128,11 @@ namespace Serbull.Builder
                 defineList.Remove("GAME_CHEATS");
             }
 
+#if UNITY_6000_0_OR_NEWER
+            PlayerSettings.SetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Android, defineList.ToArray());
+#else
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defineList.ToArray());
+#endif
         }
     }
 }
