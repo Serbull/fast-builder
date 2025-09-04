@@ -61,7 +61,8 @@ namespace Serbull.Builder
             DrawCheckmarkBlock("APK debug build", ref _apkDebugBuild, (x) => BuilderSettings.ApkDebugBuild = x, "define DEBUG");
             DrawCheckmarkBlock("APK cheat build", ref _apkCheatBuild, (x) => BuilderSettings.ApkCheatBuild = x, "define GAME_CHEATS");
             DrawCheckmarkBlock("APK time prefix", ref _apkTimePrefix, (x) => BuilderSettings.ApkTimePrefix = x);
-            DrawCheckmarkBlock("AAB build version up", ref _aabBuildVersionUp, (x) => BuilderSettings.AabBuildVersionUp = x);
+            var aabBuildVersionUpExtra = PlayerSettings.Android.bundleVersionCode + (BuilderSettings.AabBuildVersionUp ? $" -> {PlayerSettings.Android.bundleVersionCode + 1}" : null);
+            DrawCheckmarkBlock("AAB build version up", ref _aabBuildVersionUp, (x) => BuilderSettings.AabBuildVersionUp = x, $"Bandle version {aabBuildVersionUpExtra}");
             DrawCheckmarkBlock("Use keystore", ref _useKeystore, (x) => BuilderSettings.UseKeystore = x);
 
             if (_useKeystore)
