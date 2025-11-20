@@ -45,8 +45,7 @@ namespace Serbull.Builder
                 PlayerSettings.Android.bundleVersionCode++;
             }
 
-            var version = BuilderSettings.GetVersionWithBundle(PlayerSettings.Android.bundleVersionCode, BuilderSettings.AddBundleToVersion);
-            PlayerSettings.bundleVersion = version;
+            PlayerSettings.bundleVersion = BuilderSettings.GetVersionWithBundle(PlayerSettings.Android.bundleVersionCode, BuilderSettings.AddBundleToVersion);
 
             EditorUserBuildSettings.buildAppBundle = !apk;
 
@@ -74,24 +73,34 @@ namespace Serbull.Builder
             {
                 UnityEngine.Debug.Log($"FAST BUILDER: succesful build! {fileName}");
 
-                if (!apk)
+                try
                 {
-                    if (!BuilderSettings.AddBundleToVersion)
+                    if (!apk)
                     {
-                        var addFileName = $"-({PlayerSettings.Android.bundleVersionCode})";
+                        if (!BuilderSettings.AddBundleToVersion)
+                        {
+                            var addFileName = $"-({PlayerSettings.Android.bundleVersionCode})";
+                            var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
+                            System.IO.File.Move(fullPath, newFilePath);
+                        }
+                    }
+                    else if (BuilderSettings.ApkTimePrefix)
+                    {
+                        var addFileName = $"-{DateTime.Now:HHmm}";
                         var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
                         System.IO.File.Move(fullPath, newFilePath);
                     }
-                }
-                else if (BuilderSettings.ApkTimePrefix)
-                {
-                    var addFileName = $"-{DateTime.Now:HHmm}";
-                    var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
-                    System.IO.File.Move(fullPath, newFilePath);
-                }
 
-                OpenFolderWithPackage(buildPath);
+                    OpenFolderWithPackage(buildPath);
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.LogError(ex.Message);
+                }
             }
+
+            PlayerSettings.bundleVersion = BuilderSettings.GetVersionWithBundle(PlayerSettings.Android.bundleVersionCode, false);
+            AssetDatabase.SaveAssets();
         }
 
         public static void OpenFolderWithPackage(string path)
