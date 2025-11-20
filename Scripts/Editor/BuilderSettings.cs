@@ -1,4 +1,5 @@
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace Serbull.Builder
@@ -15,6 +16,7 @@ namespace Serbull.Builder
             public bool ApkCheatBuild = true;
             public bool ApkTimePrefix = true;
             public bool AabBuildVersionUp = true;
+            public bool AddBundleToVersion;
         }
 
         private static SettingsData _data;
@@ -137,6 +139,41 @@ namespace Serbull.Builder
                 _data.AabBuildVersionUp = value;
                 SaveSettingsData();
             }
+        }
+
+        public static bool AddBundleToVersion
+        {
+            get
+            {
+                return _data.AddBundleToVersion;
+            }
+            set
+            {
+                _data.AddBundleToVersion = value;
+                SaveSettingsData();
+            }
+        }
+
+        public static string GetVersionWithBundle(int bundleCode, bool addBundle)
+        {
+            string version = PlayerSettings.bundleVersion;
+
+            version = RemoveBundleSuffix(version);
+
+            if (addBundle)
+            {
+                version = $"{version} ({bundleCode})";
+            }
+
+            return version;
+        }
+
+        private static string RemoveBundleSuffix(string v)
+        {
+            int idx = v.IndexOf(" (");
+            if (idx >= 0)
+                return v[..idx];
+            return v;
         }
     }
 }

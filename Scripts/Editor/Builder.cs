@@ -45,6 +45,9 @@ namespace Serbull.Builder
                 PlayerSettings.Android.bundleVersionCode++;
             }
 
+            var version = BuilderSettings.GetVersionWithBundle(PlayerSettings.Android.bundleVersionCode, BuilderSettings.AddBundleToVersion);
+            PlayerSettings.bundleVersion = version;
+
             EditorUserBuildSettings.buildAppBundle = !apk;
 
             var fileName = $"{Application.productName}-{PlayerSettings.bundleVersion}.";
@@ -73,9 +76,12 @@ namespace Serbull.Builder
 
                 if (!apk)
                 {
-                    var addFileName = $"-({PlayerSettings.Android.bundleVersionCode})";
-                    var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
-                    System.IO.File.Move(fullPath, newFilePath);
+                    if (!BuilderSettings.AddBundleToVersion)
+                    {
+                        var addFileName = $"-({PlayerSettings.Android.bundleVersionCode})";
+                        var newFilePath = fullPath.Insert(fullPath.Length - 4, addFileName);
+                        System.IO.File.Move(fullPath, newFilePath);
+                    }
                 }
                 else if (BuilderSettings.ApkTimePrefix)
                 {
